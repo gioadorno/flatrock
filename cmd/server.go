@@ -8,10 +8,9 @@ import (
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
-  e.Renderer = 
 
 	err := e.Start(":8080")
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
-}
+}
