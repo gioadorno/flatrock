@@ -1,0 +1,10 @@
+{{define "page2"}}
+  <h2>Page 2: The Middle</h2>
+  <p>This is the middle page of our story.</p>
+  <button id="prev-btn" hx-get="/page-1" hx-push-state>Back <</button>
+  <button id="next-btn" hx-get="/page-3" hx-push-state>Next &gt;</button>
+{{end}}
+<div class="bg-cover">
+  {{template "header"}}
+  {{ template "page2" }}
+</div>
