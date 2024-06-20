@@ -1,0 +1,8 @@
+{{define "page3"}}
+<div class="bg-cover">
+  <h2>Page 3: The Middle</h2>
+  <p>This is the middle page of our story.</p>
+  <button id="prev-btn" hx-get="/page-2" hx-push-state>Back << /button>
+      <button id="next-btn" hx-get="/page-4" hx-push-state>Next &gt;</button>
+</div>
+{{end}}
