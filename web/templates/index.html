@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
-    <link href="../css/style.css" rel="stylesheet">
-    <script src="htmx.min.js">
-    </script>
-  </head>
-  <body class="dark:bg-slate-950">
-    <main class="h-screen w-screen grid grid-rows-3">
-     Test 
-    </main> 
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link href="../css/style.css" rel="stylesheet">
+  <script src="htmx.min.js">
+  </script>
+</head>
+
+<body class="dark:bg-slate-950">
+  {{define "home"}}}
+  <div class="flex items-center justify-center">
+    <button id="start-btn" hx-get="/page-1" hx-push-state>Begin the Story &gt;</button>
+  </div>
+  {{end}}
+    <header>
+      
+    </header>
+  <main class="h-screen w-screen grid grid-rows-3">
+      {{template "home"}}
+  </main>
+    <footer>
+      
+    </footer>
+</body>
+
 </html>
