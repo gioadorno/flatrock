@@ -1,58 +1,52 @@
 package main
 
 import (
-	"github.com/gioadorno/flatrock/handler"
-	"github.com/labstack/echo/v4"
+    "fmt"
+    "html/template"
+    "log"
+    "net/http"
+    "strconv"
 )
 
 func main() {
-	e := echo.New()
-	p1 := &Page{c: e.Context(), page: 1}
-	p2 := &Page{c: e.Context(), page: 2}
-	p3 := &Page{c: e.Context(), page: 3}
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        t := template.New("main")
+        t.Funcs(template.FuncMap{
+            "pageNum": func(page string) (int, error) {
+                pageNumInt, err := strconv.Atoi(page)
+                return pageNumInt, err
+            },
+        })
 
-	e.GET("/", func(c echo.Context) error {
-		return c.Render(200, "home", nil)
-	})
+        switch r.URL.Path {
+        case "/":
+            mainHandler(w, r, t)
+        default:
+            http.Error(w, "Page not found", http.StatusNotFound)
+        }
+    })
+    log.Println("Server listening on port 8080...")
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
-	e.GET("/page-1", func(c echo.Context) error { return p1.RenderPage() })
-	e.GET("/page-2", func(c echo.Context) error { return p2.Render() })
-	e.GET("/page-3", func(c echo.Context) error { return p3.Render() })
-
-	// hx-get and hx-push-state are used to enable htmx routing
-	e.GET("/page-{page}", func(c echo.Context) error {
-		page := c.Param("page")
-		switch page {
-		case "1":
-			return p1.Render()
-		case "2":
-			return p2.Render()
-		case "3":
-			return p3.Render()
-		default:
-			return c.String(404, "Page not found")
-		}
-	})
-
-	e.GET("/page-{page}/prev", func(c echo.Context) error {
-		page := c.Param("page")
-		switch page {
-		case "1":
-			return p3.Render()
-		default:
-			return p2.Render()
-		}
-	})
-
-	e.GET("/page-{page}/next", func(c echo.Context) error {
-		page := c.Param("page")
-		switch page {
-		case "3":
-			return p1.Render()
-		default:
-			return p2.Render()
-		}
-	})
-
-	e.Start(":8080")
+func mainHandler(w http.ResponseWriter, r *http.Request, t *template.Template) {
+    // Check if a "page" query parameter is present in the URL
+    pageNum := r.URL.Query().Get("page")
+    if pageNum == "" {
+        // Render index. html (start of the story) if no page query param is present
+        data := map[string]string{"title": "Start of the Story"}
+        err := t.ExecuteTemplate(w, "index.html", data)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+    } else {
+        pageNumInt, _ := strconv.Atoi(pageNum)
+        data := map[string]string{"title": "Page " + pageNum}
+        err := t.ExecuteTemplate(w, "page"+pageNum+".html", data)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+    }
 }
